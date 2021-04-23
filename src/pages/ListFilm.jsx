@@ -7,9 +7,6 @@ import Sidebar from '../components/Sidebar';
 import api from '../config/api';
 import { useHistory } from 'react-router';
 
-// const ListFilme = ({ modules }) => {
-
-
     const ListFilmeKabum = styled.section `
         height: 100vh;
         max-width: 100vw;
@@ -38,9 +35,6 @@ import { useHistory } from 'react-router';
             box-shadow: 0.1em 0.1em 1em #dfdfdf;
         }
 
-        `;
-    const Filter = styled.input`
-        /* background: red; */
     `;
     const Input = styled.input `
         width: 90%;
@@ -120,20 +114,20 @@ import { useHistory } from 'react-router';
     `;
 
 
-const ListFilme = () => {
+const ListFilme = ({ modules }) => {
 
     const history = useHistory();
     const [data, setData] = useState([]);
     const [search, setSearch] = useState('');
     const [Filter, setFilter] = useState('')
 
-    useEffect(() => {
-        async function loadFilms() {
-            const {data} = await api.get('/films')
-            setData(data);
-        }
-        loadFilms()
-    }, [])
+    // useEffect(() => {
+    //     async function loadFilms() {
+    //         const {data} = await api.get('/films')
+    //         setData(data);
+    //     }
+    //     loadFilms()
+    // }, [])
 
        
     async function handlerDelete(id){
@@ -146,13 +140,10 @@ const ListFilme = () => {
         console.log(Filter)
     }
 
-    // async function handleFilterClassificacao(classif) {
-    //     console.log(classif)
-    // }
-
-    // async function handleFilterData(data) {
-    //     console.log(data)
-    // }
+    async function handleSearch() {
+        const {data} = await api.get(`/films?title=${search}`)
+        setData(data);
+    }
 
     return(
         <>
@@ -186,7 +177,7 @@ const ListFilme = () => {
                 </Content>
 
                 <PostsContent>
-                    {data.map(Data => (
+                    {modules.map(Data => (
                         <Posts key={Data.id}>
                             <Post>
                                 <Title key={Data.title}>{Data.title}</Title>

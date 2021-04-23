@@ -5,6 +5,7 @@ function reducer() {
     return db.films;
 }
 
+
 const store = createStore(reducer);
 
 export default store;
