@@ -127,16 +127,20 @@ const ListFilme = () => {
         alert('Filme deletado do Catalogo!')
         history.push('/')
     }
+
     useEffect(() => {
     async function handleSearch() {
         if(search.length > 0){
             const {data} = await api.get(`/films?title=${search}`)
             return setData(data);
         }
-        else{
+        else if(search.length <= 0){
             const {data} = await api.get('/films')
-            setData(data);
+            return setData(data);
+        } else if(Filter.length > 0) {
+            
         }
+
     }
         handleSearch()
     }, [search])
