@@ -20,6 +20,7 @@ import { useHistory } from 'react-router';
         padding: 25px 0;
         display: flex;
         margin: 0 auto;
+        flex-wrap: wrap;
     `;
     const Search = styled.form `
         background-color: #f8f8f8;
@@ -112,14 +113,18 @@ import { useHistory } from 'react-router';
         justify-content: center;
         margin: auto;
     `;
+    const Select = styled.select`
+        margin: 0 5px 0 10px;
+        border: none;
+        font-size: 16px;
+    `;
 
 
 const ListFilme = () => {
 
     const history = useHistory();
     const [data, setData] = useState([]);
-    const [dataSearch, setDataSearch] = useState([])
-    const [search, setSearch] = useState();
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         async function loadFilms() {
@@ -129,11 +134,11 @@ const ListFilme = () => {
         loadFilms()
     }, [])
 
-    function handlerSearch() {
-        const {data} = api.get(`/films?title=${search}`)
+    {search.length > 0 
+        && const {data} = api.get(`/films?title=${search}`)
         console.log(data);
     }
-
+    
     async function handlerDelete(id){
         await api.delete(`/films/${id}`)
         alert('Filme deletado do Catalogo!')
@@ -143,9 +148,11 @@ const ListFilme = () => {
     async function handleFilterCategory(category) {
         console.log(category)
     }
+
     async function handleFilterClassificacao(classif) {
         console.log(classif)
     }
+
     async function handleFilterData(data) {
         console.log(data)
     }
@@ -156,28 +163,28 @@ const ListFilme = () => {
                 <Sidebar Title="Lista Filmes KaBuM" />             
 
                 <Content>
-                    <Search onSubmit={handlerSearch}>
+                    <Search>
                         <AiOutlineSearch style={{'fontSize': '22px'}} />
-                        <Input type="text" placeholder="Search" onChange={e => setSearch(e.target.value)} />
+                        <Input type="text" placeholder="Search" onChange={e => setSearch(e.target.value)}  />
                     </Search>
-                    <select name="categoria" id="category">
+                    <Select name="categoria" id="category">
                         <option value="0" hidden>Categoria</option>
                         {data.map(Data=> (
-                            <option value={Data.category} onClick={() => handleFilterCategory(Data.category)}>{Data.category}</option>
+                            <option key={Data.category} value={Data.category} onChange={() => {handleFilterCategory(Data.category)}}>{Data.category}</option>
                         ))}
-                    </select>
-                    <select name="Classificacao" id="Classificacao">
+                    </Select>
+                    <Select name="Classificacao" id="Classificacao">
                         <option value="0" hidden>Classificação</option>
                         {data.map(Data=> (
-                            <option value={Data.class} onClick={() => handleFilterClassificacao(Data.class)}>{Data.class}</option>
+                            <option key={Data.class} value={Data.class} onChange={() => {handleFilterClassificacao(Data.class)}}>{Data.class}</option>
                         ))}
-                    </select>
-                    <select name="Data" id="Data">
+                    </Select>
+                    <Select name="Data" id="Data">
                         <option value="0" hidden>Lançamento</option>
                         {data.map(Data=> (
-                            <option value={Data.class} onClick={() => handleFilterData(Data.release)}>{Data.release}</option>
+                            <option key={Data.class} value={Data.class} onChange={() => {handleFilterData(Data.release)}}>{Data.release}</option>
                         ))}
-                    </select>
+                    </Select>
                 </Content>
 
                 <PostsContent>
