@@ -7,13 +7,13 @@ import { Provider } from 'react-redux';
 
 export default function Router() {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Provider store={store}>
-          <Route path="/" component={ListFilm} exact />
-          <Route path="/register" component={RegisterFilm} />
-        </Provider>
-      </Switch>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Switch>
+            <Route path="/" component={ListFilm} exact/>
+            <Route path="/register" component={RegisterFilm} />
+        </Switch>
+      </BrowserRouter>
+    </Provider>
   );
 }

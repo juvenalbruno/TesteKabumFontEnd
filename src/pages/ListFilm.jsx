@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { connect } from 'react-redux'
 
 import { AiOutlineSearch } from 'react-icons/ai';
 import Sidebar from '../components/Sidebar';
+import api from '../config/api';
+import { useHistory } from 'react-router';
 
-const ListFilme = ({ modules }) => {
+// const ListFilme = ({ modules }) => {
+
 
     const ListFilmeKabum = styled.section `
         height: 100vh;
@@ -15,14 +18,16 @@ const ListFilme = ({ modules }) => {
     `;
     const Content = styled.section `
         padding: 25px 0;
+        display: flex;
+        margin: 0 auto;
     `;
-    const Search = styled.section `
+    const Search = styled.form `
         background-color: #f8f8f8;
         display: flex;
         justify-content: space-between;
         width: 22rem;
         height: 35px;
-        margin: 0 auto;
+        /* margin: 0 auto; */
         padding: 0 20px;
         border-radius: 25px;
         align-items: center;
@@ -31,6 +36,10 @@ const ListFilme = ({ modules }) => {
         &:hover {
             box-shadow: 0.1em 0.1em 1em #dfdfdf;
         }
+
+        `;
+    const Filter = styled.input`
+        /* background: red; */
     `;
     const Input = styled.input `
         width: 90%;
@@ -51,7 +60,8 @@ const ListFilme = ({ modules }) => {
     `;
     const Posts = styled.section `
         background: #ededff;
-        height: 18rem;
+        padding: 15px;
+        height: 18.5rem;
         width: 30rem;
         margin: 10px; 
         border-radius: 3px;
@@ -61,7 +71,6 @@ const ListFilme = ({ modules }) => {
         margin: 0 25px;
         display: flex;
         flex-direction: column;
-        text-align: center;
     `;
     const Title = styled.h1 `
         font-size: 18px;
@@ -79,19 +88,67 @@ const ListFilme = ({ modules }) => {
         height: 220px;
     `;
     const Description = styled.section`
-        width: 100%;
-        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         text-align: justify; 
         margin-right: 25px;
-        text-overflow: ellipsis;
     `;
     const H1 = styled.h1 `
         font-size: 15px;
         font-weight: 300;
+        overflow: hidden;
+        text-overflow: clip;
     `;
+    const Button = styled.button`
+        background: transparent;
+        color: red;
+        border: none;
+        padding-bottom: 10px;
+        cursor: pointer;
+        height: 20px;
+        width: 25px;
+        display: flex;
+        justify-content: center;
+        margin: auto;
+    `;
+
+
+const ListFilme = () => {
+
+    const history = useHistory();
+    const [data, setData] = useState([]);
+    const [dataSearch, setDataSearch] = useState([])
+    const [search, setSearch] = useState();
+
+    useEffect(() => {
+        async function loadFilms() {
+            const {data} = await api.get('/films')
+            setData(data);
+        }
+        loadFilms()
+    }, [])
+
+    function handlerSearch() {
+        const {data} = api.get(`/films?title=${search}`)
+        console.log(data);
+    }
+
+    async function handlerDelete(id){
+        await api.delete(`/films/${id}`)
+        alert('Filme deletado do Catalogo!')
+        history.push('/')
+    }
+
+    async function handleFilterCategory(category) {
+        console.log(category)
+    }
+    async function handleFilterClassificacao(classif) {
+        console.log(classif)
+    }
+    async function handleFilterData(data) {
+        console.log(data)
+    }
 
     return(
         <>
@@ -99,28 +156,47 @@ const ListFilme = ({ modules }) => {
                 <Sidebar Title="Lista Filmes KaBuM" />             
 
                 <Content>
-                    <Search>
+                    <Search onSubmit={handlerSearch}>
                         <AiOutlineSearch style={{'fontSize': '22px'}} />
-                        <Input type="text" placeholder="Search"/>
+                        <Input type="text" placeholder="Search" onChange={e => setSearch(e.target.value)} />
                     </Search>
+                    <select name="categoria" id="category">
+                        <option value="0" hidden>Categoria</option>
+                        {data.map(Data=> (
+                            <option value={Data.category} onClick={() => handleFilterCategory(Data.category)}>{Data.category}</option>
+                        ))}
+                    </select>
+                    <select name="Classificacao" id="Classificacao">
+                        <option value="0" hidden>Classificação</option>
+                        {data.map(Data=> (
+                            <option value={Data.class} onClick={() => handleFilterClassificacao(Data.class)}>{Data.class}</option>
+                        ))}
+                    </select>
+                    <select name="Data" id="Data">
+                        <option value="0" hidden>Lançamento</option>
+                        {data.map(Data=> (
+                            <option value={Data.class} onClick={() => handleFilterData(Data.release)}>{Data.release}</option>
+                        ))}
+                    </select>
                 </Content>
 
                 <PostsContent>
-                    {modules.map(module => (
-                        <Posts key={module.id}>
+                    {data.map(Data => (
+                        <Posts key={Data.id}>
                             <Post>
-                                <Title key={module.title}>{module.title}</Title>
+                                <Title key={Data.title}>{Data.title}</Title>
 
-                                <a href={module.linkFilm} target="blank">
-                                    <Image src={module.linkImg} alt="Capa"/>
+                                <a href={Data.linkFilm} target="blank">
+                                    <Image src={Data.linkImg} alt="Capa"/>
                                 </a>
+                                <Button onClick={() => handlerDelete(Data.id)}>Excluir</Button>
                             </Post>
                             <Description>
-                                <H1><strong>Categoria:</strong> {module.category}.</H1>
-                                <H1><strong>Classificação:</strong> {module.class} anos.</H1>
-                                <H1><strong>Lançamento:</strong> {module.release}.</H1>
-                                <H1><strong>Postado:</strong> {module.postage}.</H1>
-                                <H1><strong>Resumo:</strong> {module.abstract}</H1>
+                                <H1><strong>Categoria:</strong> {Data.category}.</H1>
+                                <H1><strong>Classificação:</strong> {Data.class} anos.</H1>
+                                <H1><strong>Lançamento:</strong> {Data.release}.</H1>
+                                <H1><strong>Postado:</strong> {Data.postage}.</H1>
+                                <H1><strong>Resumo:</strong> {Data.abstract}</H1>
                             </Description>
                         </Posts>
                     ))}
