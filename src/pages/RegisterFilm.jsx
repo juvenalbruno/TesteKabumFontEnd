@@ -86,7 +86,7 @@ export default function RegisterFilm() {
             "release": `${release}`,
             "postage": `${postage}`,
             "category": `${category}`,
-            "classi": `${classi}`,
+            "class": `${classi}`,
             "abstract": `${abstract}`,
             "linkFilm": `${linkFilm}`,
             "linkImg": `${linkImg}`
