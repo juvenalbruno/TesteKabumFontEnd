@@ -125,6 +125,7 @@ const ListFilme = () => {
     const history = useHistory();
     const [data, setData] = useState([]);
     const [search, setSearch] = useState('');
+    const [Filter, setFilter] = useState('')
 
     useEffect(() => {
         async function loadFilms() {
@@ -134,28 +135,24 @@ const ListFilme = () => {
         loadFilms()
     }, [])
 
-    {search.length > 0 
-        && const {data} = api.get(`/films?title=${search}`)
-        console.log(data);
-    }
-    
+       
     async function handlerDelete(id){
         await api.delete(`/films/${id}`)
         alert('Filme deletado do Catalogo!')
         history.push('/')
     }
 
-    async function handleFilterCategory(category) {
-        console.log(category)
+    async function handleFilter(e) {
+        console.log(Filter)
     }
 
-    async function handleFilterClassificacao(classif) {
-        console.log(classif)
-    }
+    // async function handleFilterClassificacao(classif) {
+    //     console.log(classif)
+    // }
 
-    async function handleFilterData(data) {
-        console.log(data)
-    }
+    // async function handleFilterData(data) {
+    //     console.log(data)
+    // }
 
     return(
         <>
@@ -170,21 +167,22 @@ const ListFilme = () => {
                     <Select name="categoria" id="category">
                         <option value="0" hidden>Categoria</option>
                         {data.map(Data=> (
-                            <option key={Data.category} value={Data.category} onChange={() => {handleFilterCategory(Data.category)}}>{Data.category}</option>
+                            <option key={Data.category} value={Data.category} onChange={() => setFilter(`${Data.category}`)}>{Data.category}</option>
                         ))}
                     </Select>
                     <Select name="Classificacao" id="Classificacao">
                         <option value="0" hidden>Classificação</option>
                         {data.map(Data=> (
-                            <option key={Data.class} value={Data.class} onChange={() => {handleFilterClassificacao(Data.class)}}>{Data.class}</option>
+                            <option key={Data.class} value={Data.class} onChange={(e) => {handleFilter(Data.class)}}>{Data.class}</option>
                         ))}
                     </Select>
                     <Select name="Data" id="Data">
                         <option value="0" hidden>Lançamento</option>
                         {data.map(Data=> (
-                            <option key={Data.class} value={Data.class} onChange={() => {handleFilterData(Data.release)}}>{Data.release}</option>
+                            <option key={Data.class} value={Data.class} onChange={(e) => {handleFilter(e.target.value)}}>{Data.release}</option>
                         ))}
                     </Select>
+               
                 </Content>
 
                 <PostsContent>
