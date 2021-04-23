@@ -114,36 +114,40 @@ import { useHistory } from 'react-router';
     `;
 
 
-const ListFilme = ({ modules }) => {
+// const ListFilme = ({ data }) => {
+const ListFilme = () => {
 
     const history = useHistory();
     const [data, setData] = useState([]);
     const [search, setSearch] = useState('');
     const [Filter, setFilter] = useState('')
 
-    // useEffect(() => {
-    //     async function loadFilms() {
-    //         const {data} = await api.get('/films')
-    //         setData(data);
-    //     }
-    //     loadFilms()
-    // }, [])
-
-       
     async function handlerDelete(id){
         await api.delete(`/films/${id}`)
         alert('Filme deletado do Catalogo!')
         history.push('/')
     }
+    useEffect(() => {
+    async function handleSearch() {
+        if(search.length > 0){
+            const {data} = await api.get(`/films?title=${search}`)
+            return setData(data);
+        }
+        else{
+            const {data} = await api.get('/films')
+            setData(data);
+        }
+    }
+        handleSearch()
+    }, [search])
 
+    
+    console.log(search);
     async function handleFilter(e) {
         console.log(Filter)
     }
 
-    async function handleSearch() {
-        const {data} = await api.get(`/films?title=${search}`)
-        setData(data);
-    }
+
 
     return(
         <>
@@ -158,7 +162,14 @@ const ListFilme = ({ modules }) => {
                     <Select name="categoria" id="category">
                         <option value="0" hidden>Categoria</option>
                         {data.map(Data=> (
-                            <option key={Data.category} value={Data.category} onChange={() => setFilter(`${Data.category}`)}>{Data.category}</option>
+                            <option
+                                key={Data.category} 
+                                value={Data.category} 
+                                onChange={() => setFilter(`${Data.category}`)}
+                                // onClick={handleSearch()}
+                            >
+                                {Data.category}
+                            </option>
                         ))}
                     </Select>
                     <Select name="Classificacao" id="Classificacao">
@@ -177,7 +188,7 @@ const ListFilme = ({ modules }) => {
                 </Content>
 
                 <PostsContent>
-                    {modules.map(Data => (
+                    {data.map(Data => (
                         <Posts key={Data.id}>
                             <Post>
                                 <Title key={Data.title}>{Data.title}</Title>
@@ -202,4 +213,4 @@ const ListFilme = ({ modules }) => {
     );
 }
 
-export default connect(state => ({ modules: state }))(ListFilme)
+export default connect(state => ({ data: state }))(ListFilme)
